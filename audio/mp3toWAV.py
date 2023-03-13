@@ -7,7 +7,6 @@ import argparse
 parser = argparse.ArgumentParser(description='convert mp3 to wav using ffmpeg (linux) and pydub library')
 parser.add_argument('-s','--src', type=str, help='src file (include the .mp3 extension)')
 parser.add_argument('-o','--output', type=str, help='output file (include the .wav extension)')
-
 # parse the arguments from the command line
 args = parser.parse_args()
 
