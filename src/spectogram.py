@@ -2,6 +2,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import signal
 from scipy.io import wavfile
+import argparse
+
+# ArgumentParser for input parse
+parser = argparse.ArgumentParser(description='convert mp3 to wav using ffmpeg (linux) and pydub library')
+parser.add_argument('-s','--src', type=str, help='src file (wav format)')
 
 # Load audio file
 sample_rate, samples = wavfile.read("example_song.wav")
