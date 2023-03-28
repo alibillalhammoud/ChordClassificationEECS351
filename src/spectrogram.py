@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import signal
 from scipy.io import wavfile
+from scipy.interpolate import CubicSpline
 import argparse
-
 from util import *
 from notes import *
 
@@ -36,25 +36,32 @@ for j in spectrogram_columns:
     for i in spectrogram_rows:
         if spectrogram[i, j] > magn_threshold:
             thresh_spectrogram[i, j] = 1
-            detected_notes_list.append([times[j], freq2note(frequencies[i],piano_frequencies)])
+            if not [times[j], freq2note(frequencies[i],piano_frequencies)] in detected_notes_list:
+                detected_notes_list.append([times[j], freq2note(frequencies[i],piano_frequencies)])
+#
 
 # List detected notes 'cells'
+"""
 for (t, n) in detected_notes_list:
     print("Time: ", t, "Note: ", n)
+#
+"""
 
+"""
 # plot spectrogram
 plt.pcolormesh(times, frequencies, spectrogram)
 plt.ylim(0, 1000)
-plt.xlim(0, 12)
+#plt.xlim(0, 12)
 plt.xlabel('Time (s)')
 plt.ylabel('Frequency (Hz)')
 plt.colorbar()
 plt.show()
+"""
 
-# plot frequency spectrum at some time
-'''
-data = spectrogram[:, t2ind(52.3)]
-plt.plot(frequencies, data)
+# plot frequency spectrum at some times
+#data = spectrogram[:, t2ind(52.3, times)]
+fnew = np.linspace(1, 1000, 1000)
+data = CubicSpline(frequencies, spectrogram[:, t2ind(52.3, times)])
+plt.plot(fnew, data(fnew))
 plt.xlim(0, 1000)
 plt.show()
-'''
