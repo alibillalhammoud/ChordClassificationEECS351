@@ -12,3 +12,4 @@ def freq2note(freq, piano_frequencies):
             smallest_diff = diff
             note = n
     return note
+
