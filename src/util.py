@@ -1,5 +1,4 @@
 
-
 # takes in a time and returns the corresponding index in the spectrogram matrix
 def t2ind(t, times):
     return next(x for x, val in enumerate(times) if val > t)
