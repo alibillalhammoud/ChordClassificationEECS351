@@ -35,6 +35,7 @@ elif padtype== "beginend":
 
 #plotSpectrogram(frequencies,times,spectrogram)
 
+# normalize spectrogram from 0-1 and record its height and width
 spectrogram /= spectrogram.max()
 spect_rows = len(spectrogram)           # rows represent frequencies
 spect_cols = len(spectrogram[0])        # columns represent time-divisions
@@ -57,7 +58,7 @@ volume /= max(volume)
 #"""
 
 #"""
-# normalize each column, if the volume is big enough
+# normalize each column if the volume is big enough
 # volume condition avoids division by zero
 volume_threshold = 0.01
 col_norm_spectrogram = 0*spectrogram
@@ -68,7 +69,7 @@ for j in range(spect_cols):
 
 #"""
 # threshold column-normalized, volume-filtered spectrogram
-magn_threshold = 0.2
+magn_threshold = 0.8
 thresh_spectrogram = 0*spectrogram
 detected_notes_list = []
 for j in range(spect_cols):
@@ -80,11 +81,11 @@ for j in range(spect_cols):
                 detected_notes_list.append([times[j], freq2note(frequencies[i],piano_frequencies)])
 #"""
 
-
+"""
 # List detected notes
-#for (t, n) in detected_notes_list:
-#    print("Time: ", t, "Note: ", n)
-
+for (t, n) in detected_notes_list:
+    print("Time: ", t, "Note: ", n)
+"""
 
 #"""
 # plot spectrogram
@@ -96,22 +97,24 @@ plt.colorbar()
 plt.show()
 #"""
 
+"""
+# plot frequency spectrum at some time
+data = spectrogram[:, t2ind(52.3, times)]
+plt.plot(frequencies, data)
+plt.xlim(0, 1000)
+plt.show()
+"""
 
-## plot frequency spectrum at some time
-#data = spectrogram[:, t2ind(52.3, times)]
-#plt.plot(frequencies, data)
-#plt.xlim(0, 1000)
-#plt.show()
+"""
+# plot volume over time
+plt.plot(times, volume)
+plt.xlim(0, 15)
+plt.show()
+"""
 
-## plot volume over time
-#plt.plot(times, volume)
-#plt.xlim(0, 15)
-#plt.show()
-
+"""
 ## plot volume histogram
 #plt.hist(volume, bins=500)
 #plt.xlim(0, 0.1)
 #plt.show()
-
-# see git commit history for old stuff
-
+"""

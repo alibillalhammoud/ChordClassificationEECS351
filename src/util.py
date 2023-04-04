@@ -4,7 +4,7 @@ from scipy.io import wavfile
 import matplotlib.pyplot as plt
 
 def readWAV(audio_file: str):
-	"""If the audio data has multiple channels combine them by summing"""
+	#If the audio data has multiple channels combine them by summing
 	if not isinstance(audio_file, str):
 		raise TypeError("Argument must be a string")
 	sample_rate, samples = wavfile.read(audio_file)
@@ -34,7 +34,8 @@ def freq2note(freq, piano_frequencies):
 
 
 def plotSpectrogram(frequencies,times,spectrogram):
-	plt.pcolormesh(times, frequencies, np.log10(spectrogram))
+	#plt.pcolormesh(times, frequencies, np.log10(spectrogram))	# log10?
+	plt.pcolormesh(times, frequencies, spectrogram)
 	plt.ylim(0, 1000)
 	plt.xlabel('Time (s)')
 	plt.ylabel('Frequency (Hz)')
