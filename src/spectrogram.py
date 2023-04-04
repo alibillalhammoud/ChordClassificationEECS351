@@ -12,85 +12,39 @@ parser = argparse.ArgumentParser(description='Perform note detection on input sr
 parser.add_argument('-s','--src', type=argparse.FileType('r'), help='src file (wav format)', required=True)
 args = parser.parse_args()
 
-# load audio into a 1D numpy array. Merges audio if more than 1 channel
+# load audio
 sample_rate, samples, num_samples = readWAV(args.src.name)
 print("Num Samples:", num_samples)
 print("Sample Rate:", sample_rate)
 
 # do spectrogram
-window_length_samples = 5000    # window too short -> note getting too 'spread out' in frequency
-Wtot = 2 * window_length_samples
-window = np.hamming(window_length_samples)
-padtype="beginend"
-if padtype == "end":
-	frequencies, times, spectrogram = signal.spectrogram(samples, fs=sample_rate, nperseg=window_length_samples, nfft=Wtot, noverlap=0)
-elif padtype== "beginend":
-	window = signal.windows.hann(window_length_samples)
-	pad_width = 100 # begin and end with zeros
-	window = np.pad(window, pad_width=((pad_width, pad_width)), mode='constant')
-	frequencies, times, spectrogram = signal.spectrogram(samples, fs=sample_rate, window=window, nperseg=window_length_samples+2*pad_width, noverlap=0)
-	#frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate, window, nfft=Wtot)
-#elif padtype == "ends":
-#	frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate, window, nfft=Wtot)
+window_length = 5000
+padding_factor = 2
+frequencies, times, spectrogram = do_spectrogram(samples, sample_rate, window_length, padding_factor, "end")
 
-#plotSpectrogram(frequencies,times,spectrogram)
+# compute and print some metrics
+compute_metrics(spectrogram, sample_rate, window_length, padding_factor)
 
-# normalize spectrogram from 0-1 and record its height and width
-spectrogram /= spectrogram.max()
-spect_rows = len(spectrogram)           # rows represent frequencies
-spect_cols = len(spectrogram[0])        # columns represent time-divisions
-spect_dt = window_length_samples/sample_rate
-spect_df = sample_rate/Wtot
+# measure volume over time
+volume = get_volume_array(spectrogram)
 
-print("Spectrogram dt: ", spect_dt)
-print("Spectrogram df: ", spect_df)
-print("Spectrogram Rows: ", spect_rows)
-print("Spectrogram Columns: ", spect_cols)
-
-#"""
-# calculate volume as function of time
-volume = [0] * spect_cols
-for j in range(spect_cols):
-    # parseval's thereom
-    for i in range(spect_rows):
-        volume[j] = volume[j] + spectrogram[i, j]**2                # probably want to normalize volume
-volume /= max(volume)
-#"""
-
-#"""
-# normalize each column if the volume is big enough
-# volume condition avoids division by zero
+# normalize individual columns
 volume_threshold = 0.01
-col_norm_spectrogram = 0*spectrogram
-for j in range(spect_cols):
-    if volume[j] > volume_threshold:
-        col_norm_spectrogram[:, j] = spectrogram[:, j] / spectrogram[:, j].max()
-#"""
+col_norm_spectrogram = do_col_normalization(spectrogram, volume, volume_threshold)
 
-#"""
-# threshold column-normalized, volume-filtered spectrogram
+# do thresholding and note detection
 magn_threshold = 0.8
-thresh_spectrogram = 0*spectrogram
-detected_notes_list = []
-for j in range(spect_cols):
-    for i in range(spect_rows):
-        if col_norm_spectrogram[i, j] > magn_threshold:
-            thresh_spectrogram[i, j] = 1
-            # keep track of notes that pass the threshold
-            if not [times[j], freq2note(frequencies[i],piano_frequencies)] in detected_notes_list:
-                detected_notes_list.append([times[j], freq2note(frequencies[i],piano_frequencies)])
-#"""
+thresh_spectrogram, detected_notes_list = do_thresholding(col_norm_spectrogram, times, frequencies, note_frequencies, magn_threshold)
 
-"""
-# List detected notes
-for (t, n) in detected_notes_list:
-    print("Time: ", t, "Note: ", n)
-"""
+#print_detected_notes(detected_notes_list)
+
+######## Plotting ##########
 
 #"""
 # plot spectrogram
 plt.pcolormesh(times, frequencies, thresh_spectrogram)
 plt.ylim(0, 1000)
+plt.xlim(0, 15)
 plt.xlabel('Time (s)')
 plt.ylabel('Frequency (Hz)')
 plt.colorbar()
@@ -108,13 +62,15 @@ plt.show()
 """
 # plot volume over time
 plt.plot(times, volume)
-plt.xlim(0, 15)
+plt.xlabel('Time (s)')
+plt.ylabel('Volume (norm)')
 plt.show()
 """
 
 """
-## plot volume histogram
-#plt.hist(volume, bins=500)
-#plt.xlim(0, 0.1)
-#plt.show()
+# plot volume histogram
+plt.hist(volume, bins=500)
+plt.xlim(0, 0.1)
+plt.xlabel('Volume (norm)')
+plt.show()
 """

@@ -1,5 +1,5 @@
 # define frequencies as in https://en.wikipedia.org/wiki/Piano_key_frequencies
-piano_frequencies = [("C3", 130.8),
+note_frequencies = [("C3", 130.8),
                      ("C#3", 138.6),
                      ("D3", 146.8),
                      ("D#3", 155.6),
