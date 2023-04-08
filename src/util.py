@@ -1,4 +1,5 @@
 import os
+import math
 import numpy as np
 from scipy.io import wavfile
 from scipy import signal
@@ -48,6 +49,10 @@ def do_spectrogram(samples, sample_rate, window_length, padding_factor, padtype)
 	return frequencies, times, spectrogram
 
 
+
+
+
+
 def do_col_normalization(spectrogram, volume, volume_threshold):
 	# normalize each column if the volume is big enough
 	# volume condition avoids division by zero
@@ -57,6 +62,19 @@ def do_col_normalization(spectrogram, volume, volume_threshold):
 		if volume[j] > volume_threshold:
 			col_norm_spectrogram[:, j] = spectrogram[:, j] / spectrogram[:, j].max()
 	return col_norm_spectrogram
+
+
+def get_harmonic_spectrogram(input_spectrogram, magn_threshold):
+	harmonic_spectrogram = 0*input_spectrogram
+	spect_rows = len(input_spectrogram)			# rows represent frequencies
+	spect_cols = len(input_spectrogram[0])		# columns represent time-divisions
+	for j in range(spect_cols):
+		for i in range(spect_rows):
+			if (input_spectrogram[i, j] > magn_threshold) and (input_spectrogram[math.floor(1.0*i/2), j] > magn_threshold):
+				harmonic_spectrogram[i, j] = input_spectrogram[i, j]
+			else:
+				harmonic_spectrogram[i, j] = 1
+	return harmonic_spectrogram
 
 
 def do_thresholding(spectrogram, times, frequencies, note_frequencies, magn_threshold):

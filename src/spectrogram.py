@@ -32,9 +32,15 @@ volume = get_volume_array(spectrogram)
 volume_threshold = 0.01
 col_norm_spectrogram = do_col_normalization(spectrogram, volume, volume_threshold)
 
+# boost magnitude of low-frequency notes
+
+# do harmonic correction
+harmonic_spectrogram = get_harmonic_spectrogram(col_norm_spectrogram, 0.01)
+harmonic_corrected_spectrogram = col_norm_spectrogram * harmonic_spectrogram
+
 # do thresholding and note detection
-magn_threshold = 0.8
-thresh_spectrogram, detected_notes_list = do_thresholding(col_norm_spectrogram, times, frequencies, note_frequencies, magn_threshold)
+magn_threshold = 0.05
+thresh_spectrogram, detected_notes_list = do_thresholding(harmonic_corrected_spectrogram, times, frequencies, note_frequencies, magn_threshold)
 
 #print_detected_notes(detected_notes_list)
 
