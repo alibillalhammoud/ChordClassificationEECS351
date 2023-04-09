@@ -6,21 +6,6 @@ from scipy import signal
 import matplotlib.pyplot as plt
 
 
-def readWAV(audio_file: str):
-	#If the audio data has multiple channels combine them by summing
-	if not isinstance(audio_file, str):
-		raise TypeError("Argument must be a string")
-	sample_rate, samples = wavfile.read(audio_file)
-	# only take first audio channel and write to a new WAV file
-	if len(samples.shape) > 1:
-		#samples = samples[:,0]
-		samples = samples.sum(axis=1) # we may do something more advanced in the future
-		# samples = samples / np.max(np.abs(samples)) #normalize audio data [-1, 1]
-		merged_wavfile = os.path.dirname(os.path.abspath(audio_file)) + "/merged_" + os.path.basename(audio_file)
-		wavfile.write(merged_wavfile, sample_rate, samples)
-	return sample_rate, samples, len(samples)
-
-
 def get_volume_array(spectrogram):
 	spect_rows = len(spectrogram)		# rows represent frequencies
 	spect_cols = len(spectrogram[0])    # columns represent time-divisions
@@ -36,15 +21,7 @@ def get_volume_array(spectrogram):
 def do_spectrogram(samples, sample_rate, window_length, padding_factor, padtype):
 	dft_length = window_length + padding_factor*window_length
 	hamming_window = np.hamming(window_length)
-	if padtype == "end":
-		frequencies, times, spectrogram = signal.spectrogram(samples, window=hamming_window, fs=sample_rate, nfft=dft_length, noverlap=0)
-	"""
-	elif padtype== "beginend":
-		hamming_window = signal.windows.hann(window_length)
-		pad_width = 100 # begin and end with zeros
-		hamming_window = np.pad(hamming_window, pad_width=((pad_width, pad_width)), mode='constant')
-		frequencies, times, spectrogram = signal.spectrogram(samples, fs=sample_rate, window=hamming_window, nperseg=window_length+2*pad_width, noverlap=0)
-	"""
+	frequencies, times, spectrogram = signal.spectrogram(samples, window=hamming_window, fs=sample_rate, nfft=dft_length, noverlap=0)
 	spectrogram /= spectrogram.max()
 	return frequencies, times, spectrogram
 
@@ -102,9 +79,9 @@ def do_thresholding(spectrogram, times, frequencies, note_frequencies, magn_thre
 	return thresh_spectrogram, detected_notes_list
 
 
-def print_detected_notes(detected_notes_list):
+def print_detected_notes(detected_notes_list, toffset=0):
 	for (t, n) in detected_notes_list:
-		print("Time: ", t, "Note: ", n)
+		print(f"Time {t + toffset} : Note {n}")
 
 
 def compute_metrics(spectrogram, sample_rate, window_length, padding_factor):
