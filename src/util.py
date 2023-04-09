@@ -1,4 +1,5 @@
 import os
+import math
 import numpy as np
 from scipy.io import wavfile
 from scipy import signal
@@ -59,6 +60,34 @@ def do_col_normalization(spectrogram, volume, volume_threshold):
 		if volume[j] > volume_threshold:
 			col_norm_spectrogram[:, j] = spectrogram[:, j] / spectrogram[:, j].max()
 	return col_norm_spectrogram
+
+
+def do_bass_boost(input_spectrogram, frequencies, f_thresh, boost_mag):
+	bb_spectrogram = input_spectrogram
+	spect_rows = len(input_spectrogram)			# rows represent frequencies
+	spect_cols = len(input_spectrogram[0])		# columns represent time-divisions
+	for j in range(spect_cols):
+		for i in range(spect_rows):
+			if frequencies[i] < f_thresh and input_spectrogram[i, j] > 0.01:
+				bb_spectrogram[i, j] = np.clip(bb_spectrogram[i, j] * boost_mag, 0, 1)
+	return bb_spectrogram
+
+
+def get_harmonic_spectrogram(input_spectrogram, magn_threshold):
+	harmonic_spectrogram = 0*input_spectrogram
+	spect_rows = len(input_spectrogram)			# rows represent frequencies
+	spect_cols = len(input_spectrogram[0])		# columns represent time-divisions
+	for j in range(spect_cols):
+		for i in range(spect_rows):
+			if (input_spectrogram[i, j] > magn_threshold) and (input_spectrogram[math.floor(1.0*i/2), j] > magn_threshold):
+				harmonic_spectrogram[i, j] = input_spectrogram[i, j]
+			else:
+				harmonic_spectrogram[i, j] = 0
+	return harmonic_spectrogram
+
+
+def do_harmonic_correction(input_spectrogram, harmonic_threshold, cut_amount):
+	return np.clip(input_spectrogram - cut_amount*get_harmonic_spectrogram(input_spectrogram, harmonic_threshold), 0, 1)
 
 
 def do_thresholding(spectrogram, times, frequencies, note_frequencies, magn_threshold):
