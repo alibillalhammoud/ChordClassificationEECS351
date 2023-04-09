@@ -30,7 +30,7 @@ srate = None
 def processing_callback(input_data, frame_count, time_info, status):
 	"""Includes get_notes function and custom printing. Processes audio data while pyaudio collects from the buffer."""
 	npinput_data = np.frombuffer(input_data, dtype=np.int16)
-	if entirerecording:
+	if entirerecording is not None:
 		entirerecording.append(npinput_data)
 	try:
 		detected_notes, thresh_spectrogram = get_notes(AudioSignal(npinput_data,srate),False)
@@ -69,15 +69,15 @@ def listenANDprocess(deviceInfo: AudioDeviceInfo, buffersize: float, listentime:
 	except KeyboardInterrupt:
 		micstream.stop_stream()
 		micstream.close()
-		micinst.terminate()
 		if record:
 			wavfilename = time.ctime().replace(' ','_').replace(':','_') + ".wav"
 			wf = wave.open(wavfilename, 'wb')
 			wf.setnchannels(deviceInfo.channels)
-			wf.setsampwidth(audio.get_sample_size(deviceInfo.format))
+			wf.setsampwidth(micinst.get_sample_size(deviceInfo.format))
 			wf.setframerate(deviceInfo.device_sample_rate)
-			wf.writeframes(entirerecording)
+			wf.writeframes(b''.join(entirerecording))
 			wf.close()
+		micinst.terminate()
 	finally:
 		micstream.stop_stream()
 		micstream.close()
