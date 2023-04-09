@@ -4,7 +4,9 @@ import numpy as np
 from scipy.io import wavfile
 from scipy import signal
 import matplotlib.pyplot as plt
+import matplotlib.ticker as tick
 
+from notes import *
 
 def get_volume_array(spectrogram):
 	spect_rows = len(spectrogram)		# rows represent frequencies
@@ -117,7 +119,39 @@ def plotSpectrogram(frequencies,times,spectrogram):
 	#plt.pcolormesh(times, frequencies, np.log10(spectrogram))	# log10?
 	plt.pcolormesh(times, frequencies, spectrogram)
 	plt.ylim(0, 1000)
+	plt.yscale("log", 10, [2, 5])
 	plt.xlabel('Time (s)')
 	plt.ylabel('Frequency (Hz)')
 	plt.colorbar()
 	plt.show()
+
+def addNoteScale(fig) :
+	ax = fig.get_axes()[0]
+
+	ax.set_yscale("log")
+
+	def noteLabeler(x, y) :
+		return freq2note(x, note_frequencies)
+
+	majtickfreq = []
+	mintickfreq = []
+	n = 0
+	for i in note_frequencies :
+		if n%4 == 0 :
+			majtickfreq.append(i[1])
+		else :
+			mintickfreq.append(i[1])
+		n += 1
+
+	ax.yaxis.set_major_locator(tick.FixedLocator(majtickfreq))
+	ax.yaxis.set_minor_locator(tick.FixedLocator(mintickfreq))
+	ax.yaxis.set_major_formatter(tick.FuncFormatter(noteLabeler))
+
+	# uncomment for no labels for in-between notes (nptes that are not C, E, G#):
+	ax.yaxis.set_minor_formatter(tick.NullFormatter())
+
+	# uncomment for labels for in-between notes (nptes that are not C, E, G#):
+	# ax.yaxis.set_minor_formatter(FuncFormatter(noteLabeler))
+
+# subdivisions within an octave - may be useful
+# [1.059, 1.122, 1.189, 1.260, 1.335, 1.414, 1.498, 1.587, 1.682, 1.782, 1.888]

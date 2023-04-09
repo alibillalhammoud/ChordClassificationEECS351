@@ -35,6 +35,7 @@ class AudioSignal:
 		return AudioSignal(samples, sample_rate)
 
 
+
 def get_notes(data: AudioSignal, print_metrics=True):
 	"""Returns a list of pairs (times, note detected) in an AudioSignal, along with a graph threshold for plotting"""
 	if not isinstance(data, AudioSignal): raise TypeError("Argument must be of the AudioSignal type")
@@ -62,9 +63,11 @@ def get_notes(data: AudioSignal, print_metrics=True):
 	thresh_spectrogram, detected_notes = do_thresholding(harmonic_corrected_spectrogram, times, frequencies, note_frequencies, magn_threshold)
 	return detected_notes, thresh_spectrogram
 
+
 #print_detected_notes(detected_notes_list)
 
 ######## Plotting ##########
+
 
 ##"""
 ## plot spectrogram
@@ -76,5 +79,33 @@ def get_notes(data: AudioSignal, print_metrics=True):
 #plt.colorbar()
 #plt.show()
 ##"""
+
+#"""
+# plot spectrogram
+
+# set our ylimits here
+# Current lowest freq labeled, C3: 130.8Hz
+# Current highest freq labeled, C7: 2093Hz
+
+#ybot = 100
+#ytop = 2000
+
+#fig = plt.pcolormesh(times, frequencies, harmonic_corrected_spectrogram).get_figure()
+
+## uncomment for the fancy note scale
+#addNoteScale(fig)
+
+#plt.ylim(ybot, ytop)
+
+## uncomment if log scale is needed - log scale is already set in addNoteScale
+## plt.yscale("log", base = 2, subs = [1.059, 1.122, 1.189, 1.260, 1.335, 1.414, 1.498, 1.587, 1.682, 1.782, 1.888])
+
+#plt.xlim(0, 15)
+#plt.xlabel('Time (s)')
+#plt.ylabel('Frequency (Hz)')
+#plt.colorbar()
+#plt.show()
+##"""
+
 
 
