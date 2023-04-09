@@ -19,7 +19,7 @@ print("Sample Rate:", sample_rate)
 
 # do spectrogram
 window_length = 5000
-padding_factor = 2
+padding_factor = 5
 frequencies, times, spectrogram = do_spectrogram(samples, sample_rate, window_length, padding_factor, "end")
 
 # compute and print some metrics
@@ -42,8 +42,24 @@ thresh_spectrogram, detected_notes_list = do_thresholding(col_norm_spectrogram, 
 
 #"""
 # plot spectrogram
-plt.pcolormesh(times, frequencies, thresh_spectrogram)
-plt.ylim(0, 1000)
+
+# set our ylimits here
+# Current lowest freq labeled, C3: 130.8Hz
+# Current highest freq labeled, C7: 2093Hz
+
+ybot = 100
+ytop = 2000
+
+fig = plt.pcolormesh(times, frequencies, col_norm_spectrogram).get_figure()
+
+# uncomment for the fancy note scale
+addNoteScale(fig)
+
+plt.ylim(ybot, ytop)
+
+# uncomment if log scale is needed - log scale is already set in addNoteScale
+# plt.yscale("log", base = 2, subs = [1.059, 1.122, 1.189, 1.260, 1.335, 1.414, 1.498, 1.587, 1.682, 1.782, 1.888])
+
 plt.xlim(0, 15)
 plt.xlabel('Time (s)')
 plt.ylabel('Frequency (Hz)')
