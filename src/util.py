@@ -190,9 +190,9 @@ def print_chord(detected_notes_list):
 	# 		print(chord_list[i])
 	# 		print(find_chords_from_notes(chord_list[i][1:]), "\n")
 	for i in range(len(nondup_list)):
-		# print(nondup_list[i])
-		if find_chords_from_notes(chord_list[i][1:]):
-		    # print("Time: ", chord_list[i][0])
-			print(nondup_list[i])
-			print(find_chords_from_notes(nondup_list[i][1:]), "\n")
+		print(nondup_list[i])
+		chordsattime = find_chords_from_notes(chord_list[i][1:])
+		if chordsattime:
+			print(chordsattime, "\n")
+	
 		
