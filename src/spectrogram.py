@@ -35,6 +35,18 @@ class AudioSignal:
 		return AudioSignal(samples, sample_rate)
 
 
+def test_realtime_notes(data: AudioSignal):
+	"""Returns straight notes quickly just to test functionality"""
+	if not isinstance(data, AudioSignal): raise TypeError("Argument must be of the AudioSignal type")
+	# do spectrogram
+	window_length = 5000
+	padding_factor = 2
+	frequencies, times, spectrogram = do_spectrogram(data.samples, data.sample_rate, window_length, padding_factor, "end")
+	test_notes = list()
+	for time in times:
+		test_notes.append((time,"C3"))
+	return test_notes
+
 
 def get_notes(data: AudioSignal, print_metrics=True):
 	"""Returns a list of pairs (times, note detected) in an AudioSignal, along with a graph threshold for plotting"""
