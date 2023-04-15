@@ -28,6 +28,8 @@ class AudioDeviceInfo:
 # functor
 class ProcessingCallback:
 	def __init__(self, device_sample_rate, record=False):
+		if not isinstance(record, bool): raise TypeError("bad arg ProcessingCallback constructor, record must be bool")
+		if not isinstance(int(device_sample_rate), int): raise TypeError("bad arg ProcessingCallback constructor, sample rate must be number")
 		self.entirerecording = list() if record else None
 		self.tstart = None # allows setting start based on first buffer time
 		self.srate = device_sample_rate

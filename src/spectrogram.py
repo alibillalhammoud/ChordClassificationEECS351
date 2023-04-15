@@ -59,7 +59,7 @@ def get_notes(data: AudioSignal, print_metrics=True):
 	# measure volume over time
 	volume = get_volume_array(spectrogram)
 	# normalize individual columns
-	volume_threshold = 0.01
+	volume_threshold = 0.7
 	col_norm_spectrogram = do_col_normalization(spectrogram, volume, volume_threshold)
 	# boost magnitude of low-frequency notes
 	#bass_boosted_spectrogram = do_bass_boost(col_norm_spectrogram, frequencies, 350, 2)
@@ -72,20 +72,9 @@ def get_notes(data: AudioSignal, print_metrics=True):
 	harmonic_threshold = 0.01
 	harmonic_orders = []
 	harmonic_corrected_spectrogram = do_harmonic_correction(col_norm_spectrogram, harmonic_threshold, harmonic_cut_amount, harmonic_orders)
-
 	# do thresholding and note detection
 	magn_threshold = 0.1
 	thresh_spectrogram, detected_notes = do_thresholding(harmonic_corrected_spectrogram, times, frequencies, note_frequencies, magn_threshold)
-	#"""
-	# plot spectrogram
-	plt.pcolormesh(times, frequencies, harmonic_corrected_spectrogram)
-	plt.ylim(0, 1000)
-	#plt.xlim(3.5, 15)
-	plt.xlabel('Time (s)')
-	plt.ylabel('Frequency (Hz)')
-	plt.colorbar()
-	plt.show()
-	#"""
 	return detected_notes, thresh_spectrogram
 
 
