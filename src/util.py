@@ -5,6 +5,8 @@ from scipy.io import wavfile
 from scipy import signal
 import matplotlib.pyplot as plt
 import matplotlib.ticker as tick
+from pychord import find_chords_from_notes 
+from pychord import Chord
 
 from notes import *
 
@@ -155,3 +157,41 @@ def addNoteScale(fig) :
 
 # subdivisions within an octave - may be useful
 # [1.059, 1.122, 1.189, 1.260, 1.335, 1.414, 1.498, 1.587, 1.682, 1.782, 1.888]
+
+def print_chord(detected_notes_list):
+	# Finds a chord for each time segment using the detected_notes_list
+	chord_list = [] 
+	nondup_list = []
+	# appends the first element in the detected notes list
+	chord_list.append([])
+	nondup_list.append([])
+	chord_list[0].append(detected_notes_list[0][0])
+	chord_list[0].append(detected_notes_list[0][1][0:-1])
+	k = 0
+	for i in range(len(detected_notes_list) - 1):
+		# appends notes in the current time segment 
+		if detected_notes_list[i][0] == detected_notes_list[i + 1][0]:
+			chord_list[k].append(detected_notes_list[i + 1][1][0])
+		# Moves to next row for the next time segment and removes duplicates in the list
+		else:
+			[nondup_list[k].append(x) for x in chord_list[k] if x not in nondup_list[k]]
+			chord_list.append([])
+			nondup_list.append([])
+			k += 1
+			chord_list[k].append(detected_notes_list[i + 1][0])
+			chord_list[k].append(detected_notes_list[i + 1][1][0:-1])
+			
+	# Prints out chords
+	# for i in range(len(chord_list)):
+	# 	print(chord_list[i])
+	# 	if find_chords_from_notes(chord_list[i][1:]):
+	# 	    # print("Time: ", chord_list[i][0])
+	# 		print(chord_list[i])
+	# 		print(find_chords_from_notes(chord_list[i][1:]), "\n")
+	for i in range(len(nondup_list)):
+		# print(nondup_list[i])
+		if find_chords_from_notes(chord_list[i][1:]):
+		    # print("Time: ", chord_list[i][0])
+			print(nondup_list[i])
+			print(find_chords_from_notes(nondup_list[i][1:]), "\n")
+		
