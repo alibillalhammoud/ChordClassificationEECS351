@@ -5,6 +5,8 @@ from scipy.io import wavfile
 from scipy import signal
 import matplotlib.pyplot as plt
 import matplotlib.ticker as tick
+from pychord import find_chords_from_notes 
+from pychord import Chord
 
 from notes import *
 
@@ -50,21 +52,22 @@ def do_bass_boost(input_spectrogram, frequencies, f_thresh, boost_mag):
 	return bb_spectrogram
 
 
-def get_harmonic_spectrogram(input_spectrogram, magn_threshold):
+# returns spectrogram of just the identified harmonics
+def get_harmonic_spectrogram(input_spectrogram, magn_threshold, harmonic_orders):
 	harmonic_spectrogram = 0*input_spectrogram
 	spect_rows = len(input_spectrogram)			# rows represent frequencies
 	spect_cols = len(input_spectrogram[0])		# columns represent time-divisions
 	for j in range(spect_cols):
 		for i in range(spect_rows):
-			if (input_spectrogram[i, j] > magn_threshold) and (input_spectrogram[math.floor(1.0*i/2), j] > magn_threshold):
-				harmonic_spectrogram[i, j] = input_spectrogram[i, j]
-			else:
-				harmonic_spectrogram[i, j] = 0
+			for h in harmonic_orders:
+				if (input_spectrogram[i, j] > magn_threshold) and (input_spectrogram[math.floor(1.0*i/h), j] > magn_threshold):
+					harmonic_spectrogram[i, j] = input_spectrogram[i, j]
 	return harmonic_spectrogram
 
 
-def do_harmonic_correction(input_spectrogram, harmonic_threshold, cut_amount):
-	return np.clip(input_spectrogram - cut_amount*get_harmonic_spectrogram(input_spectrogram, harmonic_threshold), 0, 1)
+# attenuates identified harmonics by 0-100%
+def do_harmonic_correction(input_spectrogram, harmonic_threshold, cut_amount, harmonic_order):
+	return np.clip(input_spectrogram - cut_amount*get_harmonic_spectrogram(input_spectrogram, harmonic_threshold, harmonic_order), 0, 1)
 
 
 def do_thresholding(spectrogram, times, frequencies, note_frequencies, magn_threshold):
@@ -155,3 +158,41 @@ def addNoteScale(fig) :
 
 # subdivisions within an octave - may be useful
 # [1.059, 1.122, 1.189, 1.260, 1.335, 1.414, 1.498, 1.587, 1.682, 1.782, 1.888]
+
+def print_chord(detected_notes_list):
+	# Finds a chord for each time segment using the detected_notes_list
+	chord_list = [] 
+	nondup_list = []
+	# appends the first element in the detected notes list
+	chord_list.append([])
+	nondup_list.append([])
+	chord_list[0].append(detected_notes_list[0][0])
+	chord_list[0].append(detected_notes_list[0][1][0:-1])
+	k = 0
+	for i in range(len(detected_notes_list) - 1):
+		# appends notes in the current time segment 
+		if detected_notes_list[i][0] == detected_notes_list[i + 1][0]:
+			chord_list[k].append(detected_notes_list[i + 1][1][0])
+		# Moves to next row for the next time segment and removes duplicates in the list
+		else:
+			[nondup_list[k].append(x) for x in chord_list[k] if x not in nondup_list[k]]
+			chord_list.append([])
+			nondup_list.append([])
+			k += 1
+			chord_list[k].append(detected_notes_list[i + 1][0])
+			chord_list[k].append(detected_notes_list[i + 1][1][0:-1])
+			
+	# Prints out chords
+	# for i in range(len(chord_list)):
+	# 	print(chord_list[i])
+	# 	if find_chords_from_notes(chord_list[i][1:]):
+	# 	    # print("Time: ", chord_list[i][0])
+	# 		print(chord_list[i])
+	# 		print(find_chords_from_notes(chord_list[i][1:]), "\n")
+	for i in range(len(nondup_list)):
+		# print(nondup_list[i])
+		if find_chords_from_notes(chord_list[i][1:]):
+		    # print("Time: ", chord_list[i][0])
+			print(nondup_list[i])
+			print(find_chords_from_notes(nondup_list[i][1:]), "\n")
+		

@@ -24,22 +24,26 @@ class AudioDeviceInfo:
 		self.format = audioformat
 		self.channels = numchannels
 
-entirerecording = None # global var that will contain data if not none
-tstart = 0 # global var holding the start time of the processing
-srate = None
-def processing_callback(input_data, frame_count, time_info, status):
-	"""Includes get_notes function and custom printing. Processes audio data while pyaudio collects from the buffer."""
-	npinput_data = np.frombuffer(input_data, dtype=np.int16)
-	if entirerecording is not None:
-		entirerecording.append(npinput_data)
-	try:
-		detected_notes, thresh_spectrogram = get_notes(AudioSignal(npinput_data,srate),False)
-		print_detected_notes(detected_notes, toffset=time.time()-tstart)
-		# Return the audio data and continue streaming
-		return (input_data, pyaudio.paContinue)
-	# catch overflow
-	except IOError:
-		return (input_data, pyaudio.paAbort)
+
+# functor
+class ProcessingCallback:
+	def __init__(self, device_sample_rate, start_time = 0, record=False):
+		self.entirerecording = list() if record else None
+		self.tstart = start_time
+		self.srate = device_sample_rate
+	def __call__(self, input_data, frame_count, time_info, status):
+		"""Includes get_notes function and custom printing. Processes audio data while pyaudio collects from the buffer."""
+		if status: return (input_data, pyaudio.paAbort)
+		npinput_data = np.frombuffer(input_data, dtype=np.int16)
+		if self.entirerecording is not None: self.entirerecording.append(npinput_data)
+		try:
+			detected_notes, thresh_spectrogram = get_notes(AudioSignal(npinput_data,self.srate),False)
+			print_detected_notes(detected_notes, toffset=time.time()-self.tstart)
+			# Return the audio data and continue streaming
+			return (input_data, pyaudio.paContinue)
+		# catch overflow
+		except IOError:
+			return (input_data, pyaudio.paAbort)
 
 
 def listenANDprocess(deviceInfo: AudioDeviceInfo, buffersize: float, listentime: float, record=False):
@@ -47,15 +51,12 @@ def listenANDprocess(deviceInfo: AudioDeviceInfo, buffersize: float, listentime:
 	if not isinstance(float(buffersize), float): raise TypeError("bad arg buffersize listenANDprocess func")
 	if not isinstance(float(listentime), float): raise TypeError("bad arg listentime listenANDprocess func")
 	if not isinstance(record, bool): raise TypeError("bad arg record listenANDprocess func")
-	# set global vars
-	global entirerecording, tstart, srate
-	entirerecording = list() if record else None
-	tstart = time.time()
-	srate = deviceInfo.device_sample_rate
+	# create the callback functor
+	callback = ProcessingCallback(deviceInfo.device_sample_rate, time.time(), record)
 	# create audio stream and begin processing
 	micinst = pyaudio.PyAudio()
 	buffersamps = int(buffersize * deviceInfo.device_sample_rate)
-	micstream = micinst.open(format=deviceInfo.format, channels=deviceInfo.channels, rate=deviceInfo.device_sample_rate, input=True, output=False, frames_per_buffer=buffersamps, stream_callback=processing_callback)
+	micstream = micinst.open(format=deviceInfo.format, channels=deviceInfo.channels, rate=deviceInfo.device_sample_rate, input=True, output=False, frames_per_buffer=buffersamps, stream_callback=callback)
 	# process until interrupt or finish time as set by command line
 	micstream.start_stream()
 	tstart = time.time()
