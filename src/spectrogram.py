@@ -53,14 +53,27 @@ def get_notes(data: AudioSignal, print_metrics=True):
 	#bass_boosted_spectrogram = do_bass_boost(col_norm_spectrogram, frequencies, 350, 2)
 	#bass_boosted_spectrogram = do_col_normalization(bass_boosted_spectrogram, volume, volume_threshold)
 	# 'cut' notes which are loud enough and have a signficant note 1 octave below
-	# 			harmonic_threshold: how loud does note and octave need to be before being cut
-	# 			harmonic_cut_amount: decimal representing amount of harmonic note that is removed
-	harmonic_cut_amount = 0.5
-	harmonic_threshold = 0.1
-	harmonic_corrected_spectrogram = do_harmonic_correction(col_norm_spectrogram, harmonic_threshold, harmonic_cut_amount)
+	# harmonic_threshold: how loud does note and octave need to be before being cut
+	# harmonic_cut_amount: decimal representing amount of harmonic note that is removed
+	# harmonic_orders: list of harmonic orders that should be cut ("1" = original note)
+	harmonic_cut_amount = 1
+	harmonic_threshold = 0.01
+	harmonic_orders = []
+	harmonic_corrected_spectrogram = do_harmonic_correction(col_norm_spectrogram, harmonic_threshold, harmonic_cut_amount, harmonic_orders)
+
 	# do thresholding and note detection
 	magn_threshold = 0.1
 	thresh_spectrogram, detected_notes = do_thresholding(harmonic_corrected_spectrogram, times, frequencies, note_frequencies, magn_threshold)
+	#"""
+	# plot spectrogram
+	plt.pcolormesh(times, frequencies, harmonic_corrected_spectrogram)
+	plt.ylim(0, 1000)
+	#plt.xlim(3.5, 15)
+	plt.xlabel('Time (s)')
+	plt.ylabel('Frequency (Hz)')
+	plt.colorbar()
+	plt.show()
+	#"""
 	return detected_notes, thresh_spectrogram
 
 
@@ -69,16 +82,16 @@ def get_notes(data: AudioSignal, print_metrics=True):
 ######## Plotting ##########
 
 
-##"""
-## plot spectrogram
-#plt.pcolormesh(times, frequencies, harmonic_corrected_spectrogram)
-#plt.ylim(0, 1000)
+"""
+# plot spectrogram
+plt.pcolormesh(times, frequencies, harmonic_corrected_spectrogram)
+plt.ylim(0, 1000)
 #plt.xlim(3.5, 15)
-#plt.xlabel('Time (s)')
-#plt.ylabel('Frequency (Hz)')
-#plt.colorbar()
-#plt.show()
-##"""
+plt.xlabel('Time (s)')
+plt.ylabel('Frequency (Hz)')
+plt.colorbar()
+plt.show()
+"""
 
 #"""
 # plot spectrogram

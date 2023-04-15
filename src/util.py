@@ -50,21 +50,22 @@ def do_bass_boost(input_spectrogram, frequencies, f_thresh, boost_mag):
 	return bb_spectrogram
 
 
-def get_harmonic_spectrogram(input_spectrogram, magn_threshold):
+# returns spectrogram of just the identified harmonics
+def get_harmonic_spectrogram(input_spectrogram, magn_threshold, harmonic_orders):
 	harmonic_spectrogram = 0*input_spectrogram
 	spect_rows = len(input_spectrogram)			# rows represent frequencies
 	spect_cols = len(input_spectrogram[0])		# columns represent time-divisions
 	for j in range(spect_cols):
 		for i in range(spect_rows):
-			if (input_spectrogram[i, j] > magn_threshold) and (input_spectrogram[math.floor(1.0*i/2), j] > magn_threshold):
-				harmonic_spectrogram[i, j] = input_spectrogram[i, j]
-			else:
-				harmonic_spectrogram[i, j] = 0
+			for h in harmonic_orders:
+				if (input_spectrogram[i, j] > magn_threshold) and (input_spectrogram[math.floor(1.0*i/h), j] > magn_threshold):
+					harmonic_spectrogram[i, j] = input_spectrogram[i, j]
 	return harmonic_spectrogram
 
 
-def do_harmonic_correction(input_spectrogram, harmonic_threshold, cut_amount):
-	return np.clip(input_spectrogram - cut_amount*get_harmonic_spectrogram(input_spectrogram, harmonic_threshold), 0, 1)
+# attenuates identified harmonics by 0-100%
+def do_harmonic_correction(input_spectrogram, harmonic_threshold, cut_amount, harmonic_order):
+	return np.clip(input_spectrogram - cut_amount*get_harmonic_spectrogram(input_spectrogram, harmonic_threshold, harmonic_order), 0, 1)
 
 
 def do_thresholding(spectrogram, times, frequencies, note_frequencies, magn_threshold):
