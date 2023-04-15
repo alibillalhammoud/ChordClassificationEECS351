@@ -158,8 +158,7 @@ def addNoteScale(fig) :
 
 # subdivisions within an octave - may be useful
 # [1.059, 1.122, 1.189, 1.260, 1.335, 1.414, 1.498, 1.587, 1.682, 1.782, 1.888]
-
-def print_chord(detected_notes_list):
+def print_chord(detected_notes_list, toffset=0):
 	# Finds a chord for each time segment using the detected_notes_list
 	chord_list = [] 
 	nondup_list = []
@@ -190,9 +189,10 @@ def print_chord(detected_notes_list):
 	# 		print(chord_list[i])
 	# 		print(find_chords_from_notes(chord_list[i][1:]), "\n")
 	for i in range(len(nondup_list)):
-		print(nondup_list[i])
+		if len(nondup_list[i]):
+			nondup_list[i][0] += toffset
+			print(nondup_list[i])
 		chordsattime = find_chords_from_notes(chord_list[i][1:])
-		if chordsattime:
-			print(chordsattime, "\n")
+		if chordsattime: print(chordsattime, "\n")
 	
 		

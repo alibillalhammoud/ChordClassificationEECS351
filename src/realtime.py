@@ -44,7 +44,7 @@ class ProcessingCallback:
 			detected_notes, thresh_spectrogram = get_notes(AudioSignal(npinput_data,self.srate),False)
 			#detected_notes = test_realtime_notes(AudioSignal(npinput_data,self.srate))
 			#print_detected_notes(detected_notes, toffset=time_info["input_buffer_adc_time"]-self.tstart)
-			print_chord(detected_notes)
+			print_chord(detected_notes, toffset=time_info["input_buffer_adc_time"]-self.tstart)
 			# Return the audio data and continue streaming
 			return (input_data, pyaudio.paContinue)
 		# catch overflow
