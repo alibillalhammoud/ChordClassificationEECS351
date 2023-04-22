@@ -159,17 +159,25 @@ def addNoteScale(fig) :
 
 
 def print_chord(detected_notes_list, toffset=0):
-	notes_list = []
+	times_list = []
 	for i in range(len(detected_notes_list)):
-		notes_list.append(detected_notes_list[i][1][0:-1])
+		#print(detected_notes_list[i])
+		if not detected_notes_list[i][0] in times_list:
+			times_list.append(detected_notes_list[i][0])
+	
+	for t in range(len(times_list)):
+		notes_list_nodup = []
+		for i in range(len(detected_notes_list)):
+			if detected_notes_list[i][0] == times_list[t]:
+				if not detected_notes_list[i][1][0:-1] in notes_list_nodup:
+					notes_list_nodup.append(detected_notes_list[i][1][0:-1])
 
-	notes_list_nodup = []
-	for i in range(len(notes_list)):
-		if not notes_list[i] in notes_list_nodup:
-			notes_list_nodup.append(notes_list[i])
-
-	print(notes_list_nodup)
-	if len(notes_list_nodup) > 0:
-		print(find_chords_from_notes(notes_list_nodup))
+		chords = find_chords_from_notes(notes_list_nodup)
+		if len(chords) > 0:
+			print("t=", times_list[t], "Detected chords: ", chords)
+		elif len(notes_list_nodup) > 0:
+			print("t=", times_list[t], "Detected notes: ", notes_list_nodup)
+		
+		
 		
 	return
