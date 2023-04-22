@@ -36,7 +36,7 @@ class ProcessingCallback:
 	
 	def __call__(self, input_data, frame_count, time_info, status):
 		"""Includes get_notes function and custom printing. Processes audio data while pyaudio collects from the buffer."""
-		if self.tstart is None: self.tstart = time_info["input_buffer_adc_time"]
+		if self.tstart is None: self.tstart = time.time() - self.srate*frame_count
 		if status: return (input_data, pyaudio.paAbort)
 		npinput_data = np.frombuffer(input_data, dtype=np.int16)
 		if self.entirerecording is not None: self.entirerecording.append(npinput_data)
@@ -44,7 +44,7 @@ class ProcessingCallback:
 			detected_notes, thresh_spectrogram = get_notes(AudioSignal(npinput_data,self.srate),False)
 			#detected_notes = test_realtime_notes(AudioSignal(npinput_data,self.srate))
 			#print_detected_notes(detected_notes, toffset=time_info["input_buffer_adc_time"]-self.tstart)
-			print_chord(detected_notes, toffset=time_info["input_buffer_adc_time"]-self.tstart)
+			print_chord(detected_notes, toffset=time.time()-self.srate*frame_count-self.tstart)
 			# Return the audio data and continue streaming
 			return (input_data, pyaudio.paContinue)
 		# catch overflow
