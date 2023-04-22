@@ -37,6 +37,7 @@ def do_col_normalization(spectrogram, volume, volume_threshold):
 	col_norm_spectrogram = 0*spectrogram
 	for j in range(spect_cols):
 		if volume[j] > volume_threshold:
+			#print("Volume threshold met")
 			col_norm_spectrogram[:, j] = spectrogram[:, j] / spectrogram[:, j].max()
 	return col_norm_spectrogram
 
@@ -156,43 +157,19 @@ def addNoteScale(fig) :
 	# uncomment for labels for in-between notes (nptes that are not C, E, G#):
 	# ax.yaxis.set_minor_formatter(FuncFormatter(noteLabeler))
 
-# subdivisions within an octave - may be useful
-# [1.059, 1.122, 1.189, 1.260, 1.335, 1.414, 1.498, 1.587, 1.682, 1.782, 1.888]
+
 def print_chord(detected_notes_list, toffset=0):
-	# Finds a chord for each time segment using the detected_notes_list
-	chord_list = [] 
-	nondup_list = []
-	# appends the first element in the detected notes list
-	chord_list.append([])
-	nondup_list.append([])
-	chord_list[0].append(detected_notes_list[0][0])
-	chord_list[0].append(detected_notes_list[0][1][0:-1])
-	k = 0
-	for i in range(len(detected_notes_list) - 1):
-		# appends notes in the current time segment 
-		if detected_notes_list[i][0] == detected_notes_list[i + 1][0]:
-			chord_list[k].append(detected_notes_list[i + 1][1][0])
-		# Moves to next row for the next time segment and removes duplicates in the list
-		else:
-			[nondup_list[k].append(x) for x in chord_list[k] if x not in nondup_list[k]]
-			chord_list.append([])
-			nondup_list.append([])
-			k += 1
-			chord_list[k].append(detected_notes_list[i + 1][0])
-			chord_list[k].append(detected_notes_list[i + 1][1][0:-1])
-			
-	# Prints out chords
-	# for i in range(len(chord_list)):
-	# 	print(chord_list[i])
-	# 	if find_chords_from_notes(chord_list[i][1:]):
-	# 	    # print("Time: ", chord_list[i][0])
-	# 		print(chord_list[i])
-	# 		print(find_chords_from_notes(chord_list[i][1:]), "\n")
-	for i in range(len(nondup_list)):
-		if len(nondup_list[i]):
-			nondup_list[i][0] += toffset
-			print(nondup_list[i])
-		chordsattime = find_chords_from_notes(chord_list[i][1:])
-		if chordsattime: print(chordsattime, "\n")
-	
+	notes_list = []
+	for i in range(len(detected_notes_list)):
+		notes_list.append(detected_notes_list[i][1][0:-1])
+
+	notes_list_nodup = []
+	for i in range(len(notes_list)):
+		if not notes_list[i] in notes_list_nodup:
+			notes_list_nodup.append(notes_list[i])
+
+	print(notes_list_nodup)
+	if len(notes_list_nodup) > 0:
+		print(find_chords_from_notes(notes_list_nodup))
 		
+	return

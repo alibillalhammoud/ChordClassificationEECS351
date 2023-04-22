@@ -29,7 +29,7 @@ elif args.inputmode == 'mic':
 	deviceInfo = AudioDeviceInfo()
 	listenANDprocess(deviceInfo,args.buffer,args.time,args.writewav)
 
-
+#print_detected_notes(detected_notes)
 
 ## listen for exit signal and exit gracefully
 #def exit_handler(sig, frame):
