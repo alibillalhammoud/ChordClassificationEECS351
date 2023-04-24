@@ -50,7 +50,7 @@ class ProcessingCallback:
 				if self.__current_volume_benchmark[0] < most_recent_volume:
 					self.__current_volume_benchmark[0] = most_recent_volume
 				else:
-					self.__current_volume_benchmark[0] *= 0.95
+					self.__current_volume_benchmark[0] *= 0.5
 		
 		def get_volume_benchmark(self):
 			if self.__current_volume_benchmark:
