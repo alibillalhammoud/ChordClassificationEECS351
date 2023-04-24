@@ -60,7 +60,7 @@ def get_notes(data: AudioSignal, print_metrics=True, volmem=None):
 	# measure volume over time
 	volume, loudest_window_energy = get_volume_array(spectrogram)
 	if volmem:
-		if 10*loudest_window_energy < volmem: return None,None,loudest_window_energy
+		if 100*loudest_window_energy < volmem: return None,None,loudest_window_energy
 	# normalize individual columns
 	volume_threshold = 0.1
 	col_norm_spectrogram = do_col_normalization(spectrogram, volume, volume_threshold)

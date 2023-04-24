@@ -33,7 +33,7 @@ class ProcessingCallback:
 		
 		def __init__(self, mode: str):
 			if not isinstance(mode,str): raise TypeError("NoiseFilter mode must be specified as a string")
-			if mode not in ['dynamic', 'linear']: raise NotImplementedError("NoiseFilter only support dynamic or linear modes")
+			if mode not in ['dynamic', 'linear','attenuated']: raise NotImplementedError("NoiseFilter only support dynamic or linear modes")
 			self.__memory_type = mode
 			self.__current_volume_benchmark = []
 		
@@ -46,12 +46,17 @@ class ProcessingCallback:
 					self.__current_volume_benchmark.pop(0)
 			elif self.__memory_type == 'linear' and self.__current_volume_benchmark[0] < most_recent_volume:
 				self.__current_volume_benchmark[0] = most_recent_volume
+			elif self.__memory_type == 'attenuated':
+				if self.__current_volume_benchmark[0] < most_recent_volume:
+					self.__current_volume_benchmark[0] = most_recent_volume
+				else:
+					self.__current_volume_benchmark[0] *= 0.95
 		
 		def get_volume_benchmark(self):
 			if self.__current_volume_benchmark:
 				if self.__memory_type == 'dynamic':
 					return max(self.__current_volume_benchmark)
-				elif self.__memory_type == 'linear':
+				elif self.__memory_type == 'linear' or self.__memory_type == 'attenuated':
 					return self.__current_volume_benchmark[0]
 			else:
 				return 0.0
@@ -63,7 +68,7 @@ class ProcessingCallback:
 		self.__entirerecording = list() if record else None
 		self.__tstart = None # allows setting start based on first buffer time
 		self.__srate = device_sample_rate
-		self.noisefilter = ProcessingCallback.NoiseFilter('dynamic')
+		self.noisefilter = ProcessingCallback.NoiseFilter(memtype)
 	
 	def __call__(self, input_data, frame_count, time_info, status):
 		"""Includes get_notes function and custom printing. Processes audio data while pyaudio collects from the buffer."""
