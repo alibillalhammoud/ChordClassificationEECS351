@@ -25,10 +25,12 @@ if args.inputmode == 'file':
 	data = AudioSignal.fromWAV(args.src.name)
 	print("Num Samples:", data.num_samples)
 	print("Sample Rate:", data.sample_rate)
-	detected_notes, thresh_spectrogram = get_notes(data)[0:1]
+	times, frequencies, detected_notes, thresh_spectrogram = get_notes(data)[0:4]
+	plotSpectrogram(frequencies, times, thresh_spectrogram)
 elif args.inputmode == 'mic':
 	deviceInfo = AudioDeviceInfo()
 	listenANDprocess(deviceInfo,args.buffer,args.time,args.noisefilter,args.writewav)
+
 
 #print_detected_notes(detected_notes)
 

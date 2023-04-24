@@ -78,7 +78,7 @@ def get_notes(data: AudioSignal, print_metrics=True, volmem=None):
 	# do thresholding and note detection
 	magn_threshold = 0.2
 	thresh_spectrogram, detected_notes = do_thresholding(harmonic_corrected_spectrogram, times, frequencies, note_frequencies, magn_threshold)
-	return detected_notes, thresh_spectrogram, loudest_window_energy
+	return times, frequencies, detected_notes, thresh_spectrogram, loudest_window_energy
 
 
 

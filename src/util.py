@@ -117,9 +117,10 @@ def freq2note(freq, piano_frequencies):
 
 def plotSpectrogram(frequencies,times,spectrogram):
 	#plt.pcolormesh(times, frequencies, np.log10(spectrogram))	# log10?
+	plt.figure(figsize=(10,6))
 	plt.pcolormesh(times, frequencies, spectrogram)
-	plt.ylim(0, 1000)
-	plt.yscale("log", 10, [2, 5])
+	plt.ylim(0, 1500)
+	# plt.yscale("log", 10, [2, 5])
 	plt.xlabel('Time (s)')
 	plt.ylabel('Frequency (Hz)')
 	plt.colorbar()
