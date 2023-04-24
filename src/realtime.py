@@ -33,11 +33,12 @@ class ProcessingCallback:
 		
 		def __init__(self, mode: str):
 			if not isinstance(mode,str): raise TypeError("NoiseFilter mode must be specified as a string")
-			if mode not in ['dynamic', 'linear','attenuated']: raise NotImplementedError("NoiseFilter only support dynamic or linear modes")
+			if mode not in ['dynamic', 'linear','attenuated','none']: raise NotImplementedError("NoiseFilter only support dynamic or linear modes")
 			self.__memory_type = mode
 			self.__current_volume_benchmark = []
 		
 		def update_volume_benchmark(self, most_recent_volume: float):
+			if self.__memory_type == 'none': return
 			if not isinstance(float(most_recent_volume), float): raise TypeError("most_recent_volume must be number like")
 			if not self.__current_volume_benchmark: self.__current_volume_benchmark.append(most_recent_volume)
 			elif self.__memory_type == 'dynamic':
@@ -58,6 +59,8 @@ class ProcessingCallback:
 					return max(self.__current_volume_benchmark)
 				elif self.__memory_type == 'linear' or self.__memory_type == 'attenuated':
 					return self.__current_volume_benchmark[0]
+				elif self.__memory_type == 'none':
+					return 0.0
 			else:
 				return 0.0
 	
