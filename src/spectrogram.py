@@ -48,16 +48,19 @@ def test_realtime_notes(data: AudioSignal):
 	return test_notes
 
 
-def get_notes(data: AudioSignal, print_metrics=True):
+def get_notes(data: AudioSignal, print_metrics=True, volmem=None):
 	"""Returns a list of pairs (times, note detected) in an AudioSignal, along with a graph threshold for plotting"""
 	if not isinstance(data, AudioSignal): raise TypeError("Argument must be of the AudioSignal type")
+	if volmem and not isinstance(float(volmem), float): raise TypeError("Argument must be number like")
 	# do spectrogram
 	window_length = 5000
 	padding_factor = 2
 	frequencies, times, spectrogram = do_spectrogram(data.samples, data.sample_rate, window_length, padding_factor, "end")
 	if(print_metrics): compute_metrics(spectrogram, data.sample_rate, window_length, padding_factor)
 	# measure volume over time
-	volume = get_volume_array(spectrogram)
+	volume, loudest_window_energy = get_volume_array(spectrogram)
+	if volmem:
+		if 10*loudest_window_energy < volmem: return None,None,loudest_window_energy
 	# normalize individual columns
 	volume_threshold = 0.1
 	col_norm_spectrogram = do_col_normalization(spectrogram, volume, volume_threshold)
@@ -75,7 +78,7 @@ def get_notes(data: AudioSignal, print_metrics=True):
 	# do thresholding and note detection
 	magn_threshold = 0.2
 	thresh_spectrogram, detected_notes = do_thresholding(harmonic_corrected_spectrogram, times, frequencies, note_frequencies, magn_threshold)
-	return detected_notes, thresh_spectrogram
+	return detected_notes, thresh_spectrogram, loudest_window_energy
 
 
 

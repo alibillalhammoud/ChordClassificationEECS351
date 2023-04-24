@@ -10,30 +10,26 @@ from pychord import Chord
 
 from notes import *
 
-def get_volume_array(spectrogram):
-	spect_rows = len(spectrogram)		# rows represent frequencies
-	spect_cols = len(spectrogram[0])    # columns represent time-divisions
-	volume = [0] * spect_cols
-	for j in range(spect_cols):
-		for i in range(spect_rows):
-			volume[j] = volume[j] + spectrogram[i, j]**2	# parseval's thereom
-
-	volume /= max(volume)
-	return volume
-
 
 def do_spectrogram(samples, sample_rate, window_length, padding_factor, padtype):
 	dft_length = window_length + padding_factor*window_length
 	hamming_window = np.hamming(window_length)
 	frequencies, times, spectrogram = signal.spectrogram(samples, window=hamming_window, fs=sample_rate, nfft=dft_length, noverlap=0)
-	spectrogram /= spectrogram.max()
+	#spectrogram /= spectrogram.max()
 	return frequencies, times, spectrogram
+
+
+def get_volume_array(spectrogram):
+	volume = np.sum(np.square(spectrogram), axis=0)
+	loudest_window_energy = max(volume)
+	volume /= loudest_window_energy
+	return volume, loudest_window_energy
 
 
 def do_col_normalization(spectrogram, volume, volume_threshold):
 	# normalize each column if the volume is big enough
 	# volume condition avoids division by zero
-	spect_cols = len(spectrogram[0])    # columns represent time-divisions
+	spect_cols = len(spectrogram[0])# columns represent time-divisions
 	col_norm_spectrogram = 0*spectrogram
 	for j in range(spect_cols):
 		if volume[j] > volume_threshold:
@@ -159,25 +155,22 @@ def addNoteScale(fig) :
 
 
 def print_chord(detected_notes_list, toffset=0):
+	# create a list without duplicates of all times notes were played
 	times_list = []
-	for i in range(len(detected_notes_list)):
-		#print(detected_notes_list[i])
-		if not detected_notes_list[i][0] in times_list:
-			times_list.append(detected_notes_list[i][0])
+	for (time_played, note) in detected_notes_list:
+		if time_played not in times_list:
+			times_list.append(time_played)
 	
-	for t in range(len(times_list)):
+	for time in times_list:
+		# remove duplicate notes
 		notes_list_nodup = []
-		for i in range(len(detected_notes_list)):
-			if detected_notes_list[i][0] == times_list[t]:
-				if not detected_notes_list[i][1][0:-1] in notes_list_nodup:
-					notes_list_nodup.append(detected_notes_list[i][1][0:-1])
-
+		for (time_played, note) in detected_notes_list:
+			if (time_played == time) and (note[0:-1] not in notes_list_nodup):
+					notes_list_nodup.append(note[0:-1])
+		# find chords with pychord then print notes/chords
 		chords = find_chords_from_notes(notes_list_nodup)
 		if len(chords) > 0:
-			print("t=", times_list[t], "Detected chords: ", chords)
+			print("t=", time+toffset, "Detected chords: ", chords)
 		elif len(notes_list_nodup) > 0:
-			print("t=", times_list[t], "Detected notes: ", notes_list_nodup)
-		
-		
-		
-	return
+			print("t=", time+toffset, "Detected notes: ", notes_list_nodup)
+
