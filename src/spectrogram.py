@@ -49,6 +49,11 @@ def test_realtime_notes(data: AudioSignal):
 
 
 def get_notes(data: AudioSignal, print_metrics=True, volmem=None):
+	# twinkle: volume_threshold = 0.1, magn_threshold = 0.7, harmonic_threshold = 0.01
+	# bach_midi: volume_threshold = 0.01, magn_threshold = 0.1, bass boosting ON, harmonic_cut_amount = 0.7, harmonic_threshold = 0.01, harmonic_orders = [2]
+	# bach_rousseau: volume_threshold = 0.000001, magn_threshold = 0.3, bass boosting ON, harmonic_cut_amount = 0.5, harmonic_threshold = 0.01, harmonic_orders = [2]
+	# carillon_hedwig: 
+
 	"""Returns a list of pairs (times, note detected) in an AudioSignal, along with a graph threshold for plotting"""
 	if not isinstance(data, AudioSignal): raise TypeError("Argument must be of the AudioSignal type")
 	if volmem and not isinstance(float(volmem), float): raise TypeError("Argument must be number like")
@@ -62,67 +67,20 @@ def get_notes(data: AudioSignal, print_metrics=True, volmem=None):
 	if volmem:
 		if 1024*loudest_window_energy < volmem: return None,None,loudest_window_energy
 	# normalize individual columns
-	volume_threshold = 0.1
+	volume_threshold = 0.0000000000001
 	col_norm_spectrogram = do_col_normalization(spectrogram, volume, volume_threshold)
 	# boost magnitude of low-frequency notes
-	#bass_boosted_spectrogram = do_bass_boost(col_norm_spectrogram, frequencies, 350, 2)
-	#bass_boosted_spectrogram = do_col_normalization(bass_boosted_spectrogram, volume, volume_threshold)
+	bass_boosted_spectrogram = do_bass_boost(col_norm_spectrogram, frequencies, 350, 3)
+	bass_boosted_spectrogram = do_col_normalization(bass_boosted_spectrogram, volume, volume_threshold)
 	# 'cut' notes which are loud enough and have a signficant note 1 octave below
 	# harmonic_threshold: how loud does note and octave need to be before being cut
 	# harmonic_cut_amount: decimal representing amount of harmonic note that is removed
 	# harmonic_orders: list of harmonic orders that should be cut ("1" = original note)
 	harmonic_cut_amount = 1
 	harmonic_threshold = 0.01
-	harmonic_orders = [2]
-	harmonic_corrected_spectrogram = do_harmonic_correction(col_norm_spectrogram, harmonic_threshold, harmonic_cut_amount, harmonic_orders)
+	harmonic_orders = [2, 3, 4, 5]
+	harmonic_corrected_spectrogram = do_harmonic_correction(bass_boosted_spectrogram, harmonic_threshold, harmonic_cut_amount, harmonic_orders)
 	# do thresholding and note detection
-	magn_threshold = 0.2
+	magn_threshold = 0.1
 	thresh_spectrogram, detected_notes = do_thresholding(harmonic_corrected_spectrogram, times, frequencies, note_frequencies, magn_threshold)
 	return times, frequencies, detected_notes, thresh_spectrogram, loudest_window_energy
-
-
-
-
-######## Plotting ##########
-
-
-"""
-# plot spectrogram
-plt.pcolormesh(times, frequencies, harmonic_corrected_spectrogram)
-plt.ylim(0, 1000)
-#plt.xlim(3.5, 15)
-plt.xlabel('Time (s)')
-plt.ylabel('Frequency (Hz)')
-plt.colorbar()
-plt.show()
-"""
-
-#"""
-# plot spectrogram
-
-# set our ylimits here
-# Current lowest freq labeled, C3: 130.8Hz
-# Current highest freq labeled, C7: 2093Hz
-
-#ybot = 100
-#ytop = 2000
-
-#fig = plt.pcolormesh(times, frequencies, harmonic_corrected_spectrogram).get_figure()
-
-## uncomment for the fancy note scale
-#addNoteScale(fig)
-
-#plt.ylim(ybot, ytop)
-
-## uncomment if log scale is needed - log scale is already set in addNoteScale
-## plt.yscale("log", base = 2, subs = [1.059, 1.122, 1.189, 1.260, 1.335, 1.414, 1.498, 1.587, 1.682, 1.782, 1.888])
-
-#plt.xlim(0, 15)
-#plt.xlabel('Time (s)')
-#plt.ylabel('Frequency (Hz)')
-#plt.colorbar()
-#plt.show()
-##"""
-
-
-

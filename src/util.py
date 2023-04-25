@@ -83,6 +83,7 @@ def do_thresholding(spectrogram, times, frequencies, note_frequencies, magn_thre
 
 def print_detected_notes(detected_notes_list, toffset=0):
 	for (t, n) in detected_notes_list:
+		#if t < 20:
 		print(f"Time {t + toffset} : Note {n}")
 
 
@@ -119,7 +120,8 @@ def plotSpectrogram(frequencies,times,spectrogram):
 	#plt.pcolormesh(times, frequencies, np.log10(spectrogram))	# log10?
 	plt.figure(figsize=(10,6))
 	plt.pcolormesh(times, frequencies, spectrogram)
-	plt.ylim(0, 1500)
+	plt.xlim(19, 28)
+	plt.ylim(0, 3000)
 	# plt.yscale("log", 10, [2, 5])
 	plt.xlabel('Time (s)')
 	plt.ylabel('Frequency (Hz)')

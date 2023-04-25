@@ -27,12 +27,13 @@ if args.inputmode == 'file':
 	print("Sample Rate:", data.sample_rate)
 	times, frequencies, detected_notes, thresh_spectrogram = get_notes(data)[0:4]
 	plotSpectrogram(frequencies, times, thresh_spectrogram)
+	print_detected_notes(detected_notes)
 elif args.inputmode == 'mic':
 	deviceInfo = AudioDeviceInfo()
 	listenANDprocess(deviceInfo,args.buffer,args.time,args.noisefilter,args.writewav)
 
 
-#print_detected_notes(detected_notes)
+
 
 ## listen for exit signal and exit gracefully
 #def exit_handler(sig, frame):
