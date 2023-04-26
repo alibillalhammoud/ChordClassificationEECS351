@@ -55,8 +55,17 @@ usage: run.py file [-h] -s SRC
 options:
   -h, --help         show this help message and exit
   -s SRC, --src SRC  src file (wav format)
-  ```
+```
+
+
 ## Contributors
 **Ali Hammoud, Thomas Kennings, Joshua Lian, Sehyun Park**
 
+
+## Credits
+We recorded audio snippets from University of Michigan Music students: **Spencer VanDellen and Max Crandell**. We also processed music snippets from youtube. Below linked are all youtube video references:  
+Twinkle Twinkle Litte Star https://youtu.be/vVbzX6xLva8  
+Bach Minuet in G major (synthesized audio) https://youtu.be/i1wzdNRqyGc  
+Bach Minuet in G major (real world audio) https://youtu.be/icZob9-1MDw  
+Hedwig's Theme https://youtu.be/HJNkE18V_-k  
 
