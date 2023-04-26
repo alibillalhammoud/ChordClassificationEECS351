@@ -6,7 +6,13 @@ Our project attempts to detect notes and chords in audio samples by performing a
 
 ## Installation
 
-Download the zip file and change the directory to ChordClassificationEECS351\src in the terminal
+- Download the zip file and unzip OR git clone the directory
+- change into the ChordClassificationEECS351 directory then run
+``` console
+pip install -r requirements.txt
+```
+Next, cd into the src directory and call run.py to get started
+
 
 ## Usage
 These are the helper outputs for our program
@@ -53,5 +59,4 @@ options:
 ## Contributors
 **Ali Hammoud, Thomas Kennings, Joshua Lian, Sehyun Park**
 
-## Copyright and License
 
