@@ -1,0 +1,72 @@
+[labtob@labtob src]$ python run.py mic -n dynamic -b 1 -w
+ALSA lib pcm_dsnoop.c:566:(snd_pcm_dsnoop_open) unable to open slave
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+ALSA lib pcm.c:2664:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.rear
+ALSA lib pcm.c:2664:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.center_lfe
+ALSA lib pcm.c:2664:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.side
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+ALSA lib pcm_dsnoop.c:566:(snd_pcm_dsnoop_open) unable to open slave
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+ALSA lib pcm.c:2664:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.rear
+ALSA lib pcm.c:2664:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.center_lfe
+ALSA lib pcm.c:2664:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.side
+ALSA lib pcm_dmix.c:999:(snd_pcm_dmix_open) unable to open slave
+t= 2.23260729112863 Detected notes:  ['E']
+t= 2.345985975935886 Detected chords:  [<Chord: C>]
+t= 2.724028428936221 Detected chords:  [<Chord: Em(no5)/G>]
+t= 2.9507857985507333 Detected notes:  ['G']
+t= 3.0641644833579895 Detected chords:  [<Chord: Em(no5)>]
+t= 3.1775431681652457 Detected chords:  [<Chord: C>]
+t= 3.290921852972502 Detected chords:  [<Chord: Cno5>]
+t= 4.214545016386071 Detected notes:  ['C', 'D']
+t= 4.327923701193328 Detected notes:  ['C', 'C#', 'E']
+t= 4.441302386000584 Detected notes:  ['C', 'C#']
+t= 4.55468107080784 Detected notes:  ['C', 'C#', 'E']
+t= 4.822231134319522 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 4.935609819126778 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 5.0489885039340345 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 5.162367188741291 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 5.275745873548547 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 5.389124558355803 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 5.502503243163059 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 5.615881927970316 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 6.309041188147063 Detected chords:  [<Chord: C>]
+t= 8.177195870687092 Detected notes:  ['C']
+t= 8.290574555494347 Detected notes:  ['C']
+t= 8.403953240301604 Detected notes:  ['C', 'C#', 'E']
+t= 8.51733192510886 Detected notes:  ['C', 'C#', 'E']
+t= 8.918411096477724 Detected notes:  ['C', 'C#', 'E']
+t= 9.031789781284981 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 9.145168466092237 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 9.258547150899494 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 9.37192583570675 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 9.485304520514006 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 9.598683205321262 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 9.712061890128519 Detected notes:  ['C', 'C#', 'D#', 'E']
+t= 10.076401633740552 Detected notes:  ['F#', 'G', 'A']
+t= 10.18978031854781 Detected chords:  [<Chord: Gno5>]
+t= 12.657725342276956 Detected notes:  ['G']
+t= 12.920378049755312 Detected chords:  [<Chord: G>]
+t= 13.03375673456257 Detected notes:  ['D']
+t= 13.147135419369825 Detected chords:  [<Chord: D5>]
+t= 14.931515535259463 Detected chords:  [<Chord: Bdim>]
+t= 16.984472116375187 Detected notes:  ['B', 'F']
+t= 18.05449684515021 Detected chords:  [<Chord: Bdim>]
+t= 18.167875529957467 Detected chords:  [<Chord: Bm(no5)>]
+t= 18.281254214764722 Detected notes:  ['B']
+t= 18.394632899571977 Detected notes:  ['B']
+t= 19.058593591594914 Detected notes:  ['C', 'A', 'C#', 'E']
+t= 19.17197227640217 Detected notes:  ['C#']
+t= 19.285350961209424 Detected chords:  [<Chord: C#m(no5)>]
+t= 21.205017091465646 Detected chords:  [<Chord: C#m(no5)>]
+t= 23.164027294063786 Detected chords:  [<Chord: A>]
+t= 23.27740597887104 Detected chords:  [<Chord: A>]
+t= 24.84850844450278 Detected notes:  ['C', 'C#', 'E']
+t= 24.961887129310036 Detected chords:  [<Chord: A>]
+t= 25.17155249967597 Detected chords:  [<Chord: AM7/G#>]
+t= 25.284931184483224 Detected chords:  [<Chord: AM7/G#>]
+t= 26.78669755258798 Detected notes:  ['B', 'C', 'G']
+t= 26.900076237395236 Detected chords:  [<Chord: C>]
+^Ct= 28.552515354826877 Detected notes:  ['C#', 'D', 'D#', 'F', 'A']
+t= 28.665894039634132 Detected notes:  ['C#', 'D', 'D#']
+

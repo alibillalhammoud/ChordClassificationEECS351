@@ -68,7 +68,7 @@ class ProcessingCallback:
 	def __init__(self, device_sample_rate, record=False, memtype='dynamic'):
 		if not isinstance(record, bool): raise TypeError("bad arg ProcessingCallback constructor, record must be bool")
 		if not isinstance(int(device_sample_rate), int): raise TypeError("bad arg ProcessingCallback constructor, sample rate must be number")
-		self.__entirerecording = list() if record else None
+		self.entirerecording = list() if record else None
 		self.__tstart = None # allows setting start based on first buffer time
 		self.__srate = device_sample_rate
 		self.noisefilter = ProcessingCallback.NoiseFilter(memtype)
@@ -78,7 +78,7 @@ class ProcessingCallback:
 		if self.__tstart is None: self.__tstart = time.time() - self.__srate*frame_count # estimate time instead of use pyaudio time
 		if status: return (input_data, pyaudio.paAbort)
 		npinput_data = np.frombuffer(input_data, dtype=np.int16)
-		if self.__entirerecording is not None: self.__entirerecording.append(npinput_data)
+		if self.entirerecording is not None: self.entirerecording.append(npinput_data)
 		try:
 			detected_notes, thresh_spectrogram, max_window_energy = get_notes(AudioSignal(npinput_data,self.__srate),print_metrics=False,volmem=self.noisefilter.get_volume_benchmark())
 			self.noisefilter.update_volume_benchmark(max_window_energy)
@@ -123,7 +123,7 @@ def listenANDprocess(deviceInfo: AudioDeviceInfo, buffersize: float, listentime:
 			wf.setnchannels(deviceInfo.channels)
 			wf.setsampwidth(micinst.get_sample_size(deviceInfo.format))
 			wf.setframerate(deviceInfo.device_sample_rate)
-			wf.writeframes(b''.join(entirerecording))
+			wf.writeframes(b''.join(callback.entirerecording))
 			wf.close()
 		micinst.terminate()
 	finally:
