@@ -82,7 +82,7 @@ def get_notes(data: AudioSignal, print_metrics=True, volmem=None):
         if 1024 * loudest_window_energy < volmem:
             return None, None, loudest_window_energy
     # normalize individual columns
-    volume_threshold = 0.0000000000001
+    volume_threshold = 0.1
     col_norm_spectrogram = do_col_normalization(spectrogram, volume, volume_threshold)
     # boost magnitude of low-frequency notes
     bass_boosted_spectrogram = do_bass_boost(col_norm_spectrogram, frequencies, 350, 3)
