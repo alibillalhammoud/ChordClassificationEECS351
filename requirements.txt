@@ -1,11 +1,8 @@
 numpy
 scipy
 pyaudio
-time
 wave
 argparse
 statistics
 matplotlib
-math
-collections
 pychord
