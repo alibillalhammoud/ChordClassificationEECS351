@@ -41,7 +41,7 @@ parser_realtime.add_argument(
     "-n",
     "--noisefilter",
     choices=["dynamic", "linear", "attenuated", "none"],
-    help="Choose the noise filter mode. Dynamic mode readjusts the noise threshold in real time if the audio gets louder or quieter. Linear mode will place a linear place a linear threshold for noise based on the loudest audio from the entire session",
+    help="Choose the noise filter mode. Dynamic mode readjusts the noise threshold in real time if the audio gets louder or quieter. Linear mode will place a linear threshold for noise based on the loudest audio from the entire session",
     default="dynamic",
 )
 

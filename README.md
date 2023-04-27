@@ -47,7 +47,7 @@ options:
   -w, --writewav        writes all input data collected from the mic to a wav file.
   -n {dynamic,linear,attenuated,none}, --noisefilter {dynamic,linear,attenuated,none}
                         Choose the noise filter mode. Dynamic mode readjusts the noise threshold in real time if the audio gets louder or quieter. 
-                        Linear mode will place a linear place a linear threshold for noise based on the loudest audio from the entire session
+                        Linear mode will place a linear threshold for noise based on the loudest audio from the entire session
 ```
 **py run.py file -h**
 ``` console
