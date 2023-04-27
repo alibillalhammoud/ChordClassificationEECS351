@@ -15,6 +15,8 @@ Next, cd into the src directory and call run.py to get started
 
 
 ## Usage
+The simplest way to run the program on an audio file is: python run.py file -s "../audio/williams_hedwig_belltower_wcfsymphony.wav"
+The simplest way to run the program on your microphone is: python run.py mic
 These are the helper outputs for our program
 
 **py run.py -h**
