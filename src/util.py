@@ -135,8 +135,8 @@ def plotSpectrogram(frequencies, times, spectrogram):
     # plt.pcolormesh(times, frequencies, np.log10(spectrogram))	# log10?
     plt.figure(figsize=(10, 6))
     plt.pcolormesh(times, frequencies, spectrogram)
-    plt.xlim(19, 28)
-    plt.ylim(0, 3000)
+    #plt.xlim(19, 28)
+    plt.ylim(0, 1500)
     # plt.yscale("log", 10, [2, 5])
     plt.xlabel("Time (s)")
     plt.ylabel("Frequency (Hz)")

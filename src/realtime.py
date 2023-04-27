@@ -103,7 +103,7 @@ class ProcessingCallback:
         if self.entirerecording is not None:
             self.entirerecording.append(npinput_data)
         try:
-            detected_notes, thresh_spectrogram, max_window_energy = get_notes(
+            times, frequencies, detected_notes, thresh_spectrogram, max_window_energy = get_notes(
                 AudioSignal(npinput_data, self.__srate),
                 print_metrics=False,
                 volmem=self.noisefilter.get_volume_benchmark(),
@@ -182,4 +182,12 @@ def listenANDprocess(
     finally:
         micstream.stop_stream()
         micstream.close()
+        if record:
+            wavfilename = time.ctime().replace(" ", "_").replace(":", "_") + ".wav"
+            wf = wave.open(wavfilename, "wb")
+            wf.setnchannels(deviceInfo.channels)
+            wf.setsampwidth(micinst.get_sample_size(deviceInfo.format))
+            wf.setframerate(deviceInfo.device_sample_rate)
+            wf.writeframes(b"".join(callback.entirerecording))
+            wf.close()
         micinst.terminate()
